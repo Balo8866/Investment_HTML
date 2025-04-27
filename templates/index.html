@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="{{ 'zh-Hant' if language == 'zh' else 'en' }}">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ texts['title'] }}</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+<body>
+    <div class="language-selector">
+        <form method="POST">
+            <select name="language" onchange="this.form.submit()">
+                <option value="zh" {% if language == 'zh' %}selected{% endif %}>中文</option>
+                <option value="en" {% if language == 'en' %}selected{% endif %}>English</option>
+            </select>
+        </form>
+    </div>
+    
+    <h1 style="text-align:center;">{{ texts['title'] }}</h1>
+
+    <form method="POST" style="text-align:center; margin-bottom:30px;">
+
+
+    
+        <div class="stock-group">
+            <div>
+                <label>{{ texts['stock_label'] }}:</label>
+                <select name="ticker_select">
+                    {% for name, code in stocks.items() %}
+                        <option value="{{ code }}">{{ name }} ({{ code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <div>
+                <label>{{ '或手動輸入股票代碼:' if language == 'zh' else 'Or manually enter stock ticker:' }}</label>
+                <input type="text" name="ticker_manual" value="{{ ticker_manual or '' }}">
+            </div>
+        </div>
+        
+        <div class="date-group">
+            <div>
+                <label>{{ texts['start_date'] }}:</label>
+                <input type="date" name="start_date" value="{{ default_start_date }}" required>
+            </div>
+        
+            <div>
+                <label>{{ texts['end_date'] }}:</label>
+                <input type="date" name="end_date" value="{{ default_end_date }}" required>
+            </div>
+        </div>
+        
+        <div>
+            <label>{{ texts['indicator'] }}:</label>
+            <select name="indicator" required>
+                <option value="RSI">RSI</option>
+                <option value="MACD">MACD</option>
+                <option value="RSI+MACD">RSI + MACD</option>
+            </select>
+        </div>
+        
+        <div class="button-group">
+            <button type="submit" name="action" value="generate" class="btn-generate">{{ texts['generate'] }}</button>
+            <button type="submit" name="action" value="add" class="btn-add">{{ '加入自選' if language == 'zh' else 'Add to Favorites' }}</button>
+        </div>
+        
+    
+
+    <div style="width:90%; margin:auto;">
+        {{ graph_html|safe }}
+    </div>
+</body>
+</html>
